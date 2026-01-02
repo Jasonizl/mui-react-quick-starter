@@ -17,6 +17,15 @@ type Row = {
   company?: string
   status?: string
   notes?: string | null
+  tag?: string | null
+  region?: string | null
+  dept?: string | null
+  role?: string | null
+  createdAt?: string | null
+  updatedAt?: string | null
+  score?: number | null
+  level?: number | null
+  remarks?: string | null
 }
 
 const columns: GridColDef<Row>[] = [
@@ -112,6 +121,53 @@ const columns: GridColDef<Row>[] = [
         </a>
       ) : null,
   },
+  {
+    field: 'tag',
+    headerName: 'Tag',
+    width: 100,
+  },
+  {
+    field: 'region',
+    headerName: 'Region',
+    width: 110,
+  },
+  {
+    field: 'dept',
+    headerName: 'Department',
+    width: 140,
+  },
+  {
+    field: 'role',
+    headerName: 'Role',
+    width: 120,
+  },
+  {
+    field: 'createdAt',
+    headerName: 'Created',
+    width: 140,
+  },
+  {
+    field: 'updatedAt',
+    headerName: 'Updated',
+    width: 140,
+  },
+  {
+    field: 'score',
+    headerName: 'Score',
+    type: 'number',
+    width: 100,
+  },
+  {
+    field: 'level',
+    headerName: 'Level',
+    type: 'number',
+    width: 100,
+  },
+  {
+    field: 'remarks',
+    headerName: 'Remarks',
+    width: 220,
+  },
 ]
 
 const rows = Array.from({ length: 100 }, (_, index) => {
@@ -129,6 +185,15 @@ const rows = Array.from({ length: 100 }, (_, index) => {
     company: `Company ${(id % 20) + 1}`,
     status: id % 2 === 0 ? 'Active' : 'Inactive',
     notes: `Auto-generated note for user ${id}`,
+    tag: `T${id}`,
+    region: `R${id % 5}`,
+    dept: `Dept ${id % 10}`,
+    role: id % 3 === 0 ? 'Admin' : 'User',
+    createdAt: `2025-01-${String((id % 28) + 1).padStart(2, '0')}`,
+    updatedAt: `2025-12-${String((id % 28) + 1).padStart(2, '0')}`,
+    score: id % 100,
+    level: (id % 5) + 1,
+    remarks: `Remark ${id}`,
   }
 })
 

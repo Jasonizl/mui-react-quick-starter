@@ -1,144 +1,200 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { useEffect, useState } from 'react'
 
-const Feature = ({ title, desc }: { title: string; desc: string }) => (
-  <Card
-    variant="outlined"
-    sx={{
-      height: "100%",
-      boxShadow: 1,
-      ":hover": { boxShadow: 3 },
-    }}
-  >
-    <CardHeader
-      title={
-        <Typography variant="h6" fontWeight={800}>
-          {title}
-        </Typography>
-      }
-      sx={{ pb: 0 }}
-    />
-    <CardContent>
-      <Typography variant="body2" color="text.secondary">
-        {desc}
-      </Typography>
-    </CardContent>
-  </Card>
-);
+import { Group, Panel, useDefaultLayout } from 'react-resizable-panels'
+import Details from './Details'
+
+type Row = {
+  id: number
+  firstName: string | null
+  lastName: string | null
+  age: number | null
+  email: string
+  website: string
+  profile?: string | null
+  phone?: string
+  address?: string
+  company?: string
+  status?: string
+  notes?: string | null
+}
+
+const columns: GridColDef<Row>[] = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  {
+    field: 'firstName',
+    headerName: 'First name',
+    width: 150,
+    editable: true,
+  },
+  {
+    field: 'lastName',
+    headerName: 'Last name',
+    width: 150,
+    editable: true,
+  },
+  {
+    field: 'age',
+    headerName: 'Age',
+    type: 'number',
+    width: 110,
+    editable: true,
+  },
+  {
+    field: 'phone',
+    headerName: 'Phone',
+    width: 160,
+    editable: true,
+  },
+  {
+    field: 'address',
+    headerName: 'Address',
+    width: 240,
+    editable: true,
+  },
+  {
+    field: 'company',
+    headerName: 'Company',
+    width: 180,
+    editable: true,
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'notes',
+    headerName: 'Notes',
+    width: 300,
+    renderCell: (params) =>
+      params.value ? (
+        <span title={params.value as string}>
+          {String(params.value).slice(0, 60)}
+        </span>
+      ) : null,
+  },
+  {
+    field: 'fullName',
+    headerName: 'Full name',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 160,
+    valueGetter: (_, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+  },
+
+  {
+    field: 'email',
+    headerName: 'Email',
+    width: 220,
+    editable: true,
+  },
+  {
+    field: 'website',
+    headerName: 'Website',
+    width: 240,
+    renderCell: (params) =>
+      params.value ? (
+        <a href={params.value as string} target="_blank" rel="noreferrer">
+          {params.value}
+        </a>
+      ) : null,
+  },
+  {
+    field: 'profile',
+    headerName: 'Profile',
+    width: 160,
+    renderCell: (params) =>
+      params.value ? (
+        <a href={params.value as string} target="_blank" rel="noreferrer">
+          View
+        </a>
+      ) : null,
+  },
+]
+
+const rows = Array.from({ length: 100 }, (_, index) => {
+  const id = index + 1
+  return {
+    id,
+    firstName: `First${id}`,
+    lastName: `Last${id}`,
+    age: 18 + (id % 60),
+    email: `user${id}@example.com`,
+    website: `https://example.com/user${id}`,
+    profile: id % 7 === 0 ? null : `https://github.com/user${id}`,
+    phone: `+1-555-${String(id).padStart(4, '0')}`,
+    address: `${id} Main St, City ${id % 10}`,
+    company: `Company ${(id % 20) + 1}`,
+    status: id % 2 === 0 ? 'Active' : 'Inactive',
+    notes: `Auto-generated note for user ${id}`,
+  }
+})
 
 const HomePage = () => {
+  const [activeRow, setActiveRow] = useState<number | null>(null)
+  const showDetails = activeRow !== null
+
+  const { defaultLayout, onLayoutChange } = useDefaultLayout({
+    id: 'home-page-layout',
+    storage: localStorage,
+    panelIds: showDetails ? ['table', 'details'] : ['table'],
+  })
+
+  useEffect(() => {
+    console.log('yeay')
+  }, [])
+
   return (
-    <div className="grid grid-cols-1 gap-6 p-5 md:gap-8 md:p-8">
-      {/* Top bar quick links (react-router v7 NavLink -> MUI Button) */}
-      <div className="flex items-center justify-center">
-        <Typography variant="h2" fontWeight={900} textAlign="center">
-          MUI + Vite + React Router + Tailwind ⚡
-        </Typography>
-      </div>
-      <Divider />
-      {/* Hero */}
-      <Box
-        sx={{
-          p: { xs: 3, md: 5 },
-          boxShadow: 2,
-        }}
+    <div className="h-full flex flex-col overflow-hidden">
+      <Group
+        defaultLayout={defaultLayout}
+        onLayoutChange={onLayoutChange}
+        className="h-full"
       >
-        <Typography variant="h3" fontWeight={900} className="leading-tight">
-          Quick Starter Boilerplate
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ mt: 1.5, maxWidth: 720 }}
+        <Panel
+          minSize="40%"
+          defaultSize="70%"
+          id="table"
+          className="flex flex-1 flex-col overflow-hidden"
         >
-          Batteries included: React 19, MUI v7, React Router v7, Tailwind v4,
-          Redux Toolkit, Persist, and Vite. Clean, modern, and ready to ship. No
-          fluff.
-        </Typography>
-
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <Button variant="contained" size="large">
-            Hello world
-          </Button>
-          <Button variant="outlined" size="large">
-            View Docs
-          </Button>
-          <Button variant="text" size="large">
-            Open GitHub
-          </Button>
-        </div>
-      </Box>
-
-      {/* Quick actions */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Feature
-          title="TypeScript + SWC"
-          desc="Fast dev & builds via @vitejs/plugin-react-swc. Type-safety out of the box."
-        />
-        <Feature
-          title="MUI Theme-Ready"
-          desc="Centralized theme with palette, typography, and components that play nice with Tailwind utilities."
-        />
-        <Feature
-          title="Router v7 Friendly"
-          desc="Latest NavLink API with active state → filled buttons. Drop-in routes, nested layouts."
-        />
-      </div>
-
-      {/* Status / placeholders you can wire later */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader
-            title={<Typography fontWeight={800}>State Management</Typography>}
-            subheader="RTK + Persist pre-installed"
+          <DataGrid
+            disableMultipleRowSelection
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 100,
+                },
+              },
+            }}
+            pageSizeOptions={[100]}
+            checkboxSelection
+            onRowClick={(row) =>
+              row.id === activeRow
+                ? setActiveRow(null)
+                : setActiveRow(row.id as number)
+            }
+            className="overflow-hidden h-fit"
           />
-          <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              Wire your slices in <code>store.ts</code>, persist what matters,
-              encrypt if needed. Replace this card with your first feature
-              module.
-            </Typography>
-            <div className="mt-3 flex gap-2">
-              <Button variant="contained" size="small">
-                Create slice
-              </Button>
-              <Button variant="outlined" size="small">
-                Add persist
-              </Button>
+        </Panel>
+        {showDetails && (
+          <Panel
+            minSize="15%"
+            defaultSize="30%"
+            id="details"
+            className="overflow-y-hidden"
+          >
+            <div className="h-full contain-strict bg-gray-200 p-1 flex flex-col">
+              <Details key={activeRow} row={rows[activeRow]} />
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader
-            title={<Typography fontWeight={800}>Styling</Typography>}
-            subheader="Tailwind v4 + MUI"
-          />
-          <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              Use Tailwind for layout spacing + quick utilities, MUI for
-              accessible components and theming. Best of both worlds; zero
-              fighting.
-            </Typography>
-            <div className="mt-3 flex gap-2">
-              <Button variant="outlined" size="small">
-                Tailwind classes
-              </Button>
-              <Button variant="outlined" size="small">
-                MUI <code>sx</code>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </Panel>
+        )}
+      </Group>
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage

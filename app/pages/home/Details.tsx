@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { Box } from '@mui/material'
-import { Group, Panel, useDefaultLayout } from 'react-resizable-panels'
+import { PanelGroup, Panel } from 'react-resizable-panels'
 import RowTabs, { Row } from '../../components/common/RowTabs'
 
 type Props = {
@@ -11,25 +11,21 @@ type Props = {
 // to a small sample so the UI renders in isolation.
 export const Details: React.FC<Props> = ({ row }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const { defaultLayout, onLayoutChange } = useDefaultLayout({
-    id: 'details-tab',
-    storage: localStorage,
-    panelIds: ['details-panel'],
-  })
+  const panelGroupAutoSaveId = 'details-tab'
 
   return (
     <div ref={ref} className="h-full">
-      <Group
-        defaultLayout={defaultLayout}
-        onLayoutChange={onLayoutChange}
+      <PanelGroup
+        autoSaveId={panelGroupAutoSaveId}
         className="h-full contain-strict"
+        direction="horizontal"
       >
         <Panel id="details-panel" className="h-full">
           <Box className="h-full">
             <RowTabs row={row} />
           </Box>
         </Panel>
-      </Group>
+      </PanelGroup>
     </div>
   )
 }

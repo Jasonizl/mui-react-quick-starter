@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useEffect, useState } from 'react'
 
-import { Group, Panel, useDefaultLayout } from 'react-resizable-panels'
+import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
 import Details from './Details'
 
 type Row = {
@@ -201,11 +201,9 @@ const HomePage = () => {
   const [activeRow, setActiveRow] = useState<number | null>(null)
   const showDetails = activeRow !== null
 
-  const { defaultLayout, onLayoutChange } = useDefaultLayout({
-    id: 'home-page-layout',
-    storage: localStorage,
-    panelIds: showDetails ? ['table', 'details'] : ['table'],
-  })
+  // PanelGroup (v3) persists layout via `autoSaveId` + `storage` and emits
+  // `onLayout` changes. We pass the same id/storage so behavior is preserved.
+  const panelGroupAutoSaveId = 'home-page-layout'
 
   useEffect(() => {
     console.log('yeay')
@@ -213,16 +211,17 @@ const HomePage = () => {
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      <Group
-        defaultLayout={defaultLayout}
-        onLayoutChange={onLayoutChange}
+      <PanelGroup
+        autoSaveId={panelGroupAutoSaveId}
         className="h-full"
+        direction="horizontal"
       >
         <Panel
-          minSize="40%"
-          defaultSize="70%"
+          minSize={40}
+          defaultSize={70}
           id="table"
           className="flex flex-1 flex-col overflow-hidden"
+          order={1}
         >
           <DataGrid
             disableMultipleRowSelection
@@ -245,10 +244,12 @@ const HomePage = () => {
             className="overflow-hidden h-fit"
           />
         </Panel>
+        <PanelResizeHandle />
         {showDetails && (
           <Panel
-            minSize="15%"
-            defaultSize="30%"
+            minSize={15}
+            defaultSize={30}
+            order={2}
             id="details"
             className="overflow-y-hidden"
           >
@@ -257,7 +258,7 @@ const HomePage = () => {
             </div>
           </Panel>
         )}
-      </Group>
+      </PanelGroup>
     </div>
   )
 }

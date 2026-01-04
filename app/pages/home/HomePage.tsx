@@ -231,11 +231,11 @@ const HomePage = () => {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 100,
+                  pageSize: 50,
                 },
               },
             }}
-            pageSizeOptions={[100]}
+            pageSizeOptions={[50]}
             checkboxSelection
             onRowClick={(row) =>
               row.id === activeRow
